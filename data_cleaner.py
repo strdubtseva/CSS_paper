@@ -1,4 +1,15 @@
 import pandas as pd
+# import nltk
+import re
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk import pos_tag
+
+# # Download the NLTK resources
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 comments_data = pd.read_csv("data/comments.csv")
 posts_data = pd.read_csv("data/posts.csv")
@@ -54,3 +65,35 @@ posts_data = posts_data[~posts_data["post_id"].isin(bad_posts)]
 # Save the cleaned data
 comments_data.to_csv("data/comments_cleaned.csv", index=False)
 posts_data.to_csv("data/posts_cleaned.csv", index=False)
+
+
+def clean_text(text):
+    """
+    Function to clean the text data
+    Args: text (str): Text data to be cleaned
+    Returns: list: List of cleaned words
+    """
+    # Remove URLs
+    text = re.sub(r"http\S+", "", text)
+    # Remove special characters
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
+    # Convert text to lowercase
+    text = text.lower()
+    # Tokenize the text
+    text = word_tokenize(text)
+    # Remove stopwords
+    stop_words = set(stopwords.words("english"))
+    # Add chatgpt, university, college, professor, exam to stopwords (for exploratory analysis)
+    # stop_words.update(['chatgpt', 'university', 'college', 'professor', 'exam', 'ai'])
+    text = [word for word in text if word not in stop_words]
+    # Lemmatize the text
+    lemmatizer = WordNetLemmatizer()
+    text = [
+        (
+            lemmatizer.lemmatize(i, j[0].lower())
+            if j[0].lower() in ["a", "n", "v"]
+            else lemmatizer.lemmatize(i)
+        )
+        for i, j in pos_tag(text)
+    ]
+    return text
