@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 
-# # Download the NLTK resources
+# # Download the NLTK resources (uncomment if running for the first time)
 # nltk.download('punkt')
 # nltk.download('stopwords')
 # nltk.download('wordnet')
@@ -15,47 +15,12 @@ comments_data = pd.read_csv("data/comments.csv")
 posts_data = pd.read_csv("data/posts.csv")
 
 bad_posts = [
-    "1dtmogb",
-    "1aof69c",
-    "1bapah6",
-    "18i0lqf",
-    "116a9qq",
-    "146pc14",
-    "16pp2h6",
-    "1cja071",
-    "106yqxk",
-    "1cqx1iz",
-    "1atdd05",
-    "1527ivl",
-    "17k8rsn",
-    "14dew25",
-    "15b34ng",
-    "16ofae7",
-    "13l893a",
-    "13dufss",
-    "175s6nt",
-    "16xh795",
-    "1cksd4x",
-    "133gqee",
-    "11yiygr",
-    "13r3v36",
-    "150sshi",
-    "159yd7n",
-    "1cfw1ra",
-    "172dubs",
-    "12s31nh",
-    "12qhb8x",
-    "18501uz",
-    "1czg3x6",
-    "15rtqgc",
-    "164jmfw",
-    "13l81jl",
-    "1675zhp",
-    "13r3v36",
-    "1808tpw",
-    "18qbdzh",
-    "1beimov",
-    "112fp9z",
+    "1dtmogb", "1aof69c", "1bapah6", "18i0lqf", "116a9qq", "146pc14", "16pp2h6",
+    "1cja071", "106yqxk", "1cqx1iz", "1atdd05", "1527ivl", "17k8rsn", "14dew25",
+    "15b34ng", "16ofae7", "13l893a", "13dufss", "175s6nt", "16xh795", "1cksd4x",
+    "133gqee", "11yiygr", "13r3v36", "150sshi", "159yd7n", "1cfw1ra", "172dubs",
+    "12s31nh", "12qhb8x", "18501uz", "1czg3x6", "15rtqgc", "164jmfw", "13l81jl",
+    "1675zhp", "13r3v36", "1808tpw", "18qbdzh", "1beimov", "112fp9z",
 ]
 
 # Remove bad posts
@@ -70,8 +35,10 @@ posts_data.to_csv("data/posts_cleaned.csv", index=False)
 def clean_text(text):
     """
     Function to clean the text data
-    Args: text (str): Text data to be cleaned
-    Returns: list: List of cleaned words
+    Args:
+        text (str): Text data to be cleaned
+    Returns: 
+        list: List of cleaned words
     """
     # Remove URLs
     text = re.sub(r"http\S+", "", text)
@@ -81,19 +48,22 @@ def clean_text(text):
     text = text.lower()
     # Tokenize the text
     text = word_tokenize(text)
-    # Remove stopwords
-    stop_words = set(stopwords.words("english"))
-    # Add chatgpt, university, college, professor, exam to stopwords (for exploratory analysis)
-    # stop_words.update(['chatgpt', 'university', 'college', 'professor', 'exam', 'ai'])
-    text = [word for word in text if word not in stop_words]
+    # Define POS tag conversion dictionary
+    pos_tag_dict = {
+        'J': 'a',  # Adjective
+        'V': 'v',  # Verb
+        'N': 'n',  # Noun
+        'R': 'r'   # Adverb
+    }
     # Lemmatize the text
     lemmatizer = WordNetLemmatizer()
     text = [
-        (
-            lemmatizer.lemmatize(i, j[0].lower())
-            if j[0].lower() in ["a", "n", "v"]
-            else lemmatizer.lemmatize(i)
-        )
-        for i, j in pos_tag(text)
+        lemmatizer.lemmatize(word, pos_tag_dict.get(tag[0], 'n'))
+        for word, tag in pos_tag(text)
     ]
+    # Remove stopwords
+    stop_words = set(stopwords.words("english"))
+    # Add custom words to stopwords
+    stop_words.update(['chatgpt', 'university', 'college', 'professor', 'exam', 'ai', 'use', 'student', 'get', 'write'])
+    text = [word for word in text if word not in stop_words]
     return text
