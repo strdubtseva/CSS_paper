@@ -74,6 +74,24 @@ for subreddit in comments_data["subreddit"].unique():
     plt.title(subreddit)
     wordcloud.to_file(f"results/wordcloud_{subreddit}.png")
 
+# Create one plot of word clouds for each subreddit
+fig, axes = plt.subplots(3, 2, figsize=(20, 12))
+axes = axes.flatten()
+for idx, subreddit in enumerate(comments_data["subreddit"].unique()):
+    comments_subreddit = comments_data[comments_data["subreddit"] == subreddit]
+    all_words = [word for comment in comments_subreddit["cleaned_comment"] for word in comment]
+    fdist_comm = FreqDist(all_words)
+
+    wordcloud = WordCloud(
+        width=800, height=400, background_color="white"
+    ).generate_from_frequencies(fdist_comm)
+
+    axes[idx].imshow(wordcloud, interpolation="bilinear")
+    axes[idx].axis("off")
+    axes[idx].set_title(subreddit, fontsize=24)
+plt.tight_layout(pad=0.5)
+plt.savefig('results/wordclouds_main.png', bbox_inches='tight')
+
 # Calculate tf-idf of words in comments per subreddit
 comments_data["comment_text"] = comments_data["cleaned_comment"].apply(
     lambda x: " ".join(x)
