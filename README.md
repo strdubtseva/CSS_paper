@@ -27,7 +27,7 @@ Both tables are located in the `data` folder. Additionally, cleaned versions of 
 The collected data is manually filtered to exclude irrelevant posts, and then cleaned to focus on meaningful words.
 Data cleaning function includes:
 - Removal of special characters
-- Convertion of text to lowercase
+- Conversion of text to lowercase
 - Tokenization of text
 - Removal of stopwords
 - Lemmatization of text
@@ -39,7 +39,7 @@ Data analysis is composed of three parts:
 - **Sentiment Analysis**: Analyzes the sentiments expressed in the comments to posts using RoBERTa model trained on GoEmotions dataset (https://huggingface.co/SamLowe/roberta-base-go_emotions)
 
 ## Results
-The `result` folder contains the results of the analysis, including word clouds, TF-IDF table, topics produced by LDA and sentiments extracted from the comments.
+The `results` folder contains the results of the analysis, including word clouds, TF-IDF table, topics produced by LDA and sentiments extracted from the comments.
 
 ## Usage
 To run the code follow this pipeline:
@@ -52,6 +52,7 @@ To run the code follow this pipeline:
 
 ## Requirements
 You can install all required packages using the provided `requirements.txt` file.
+
     ```
     pip install -r requirements.txt
     ```
